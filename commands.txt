@@ -1,0 +1,21 @@
+libsimpleswitch_runner.so.0
+scp libsimpleswitch_runner.so.0 /usr/lib/
+
+wget -O ibboost-system1.62.0_1.62.0+dfsg-5_amd64.deb http://archive.ubuntu.com/ubuntu/pool/universe/b/boost1.62/libboost-system1.62.0_1.62.0+dfsg-5_amd64.deb
+wget http://archive.ubuntu.com/ubuntu/pool/universe/b/boost1.62/libboost-program-options1.62.0_1.62.0+dfsg-5_amd64.deb
+wget http://archive.ubuntu.com/ubuntu/pool/universe/b/boost1.62/libboost-filesystem1.62.0_1.62.0+dfsg-5_amd64.deb
+wget http://archive.ubuntu.com/ubuntu/pool/universe/b/boost1.62/libboost-thread1.62.0_1.62.0+dfsg-5_amd64.deb
+dpkg -i 
+
+mn --custom stratum.py --switch stratum-bmv2 --host no-offload-host --controller none --topo=linear,2,2
+
+p4c-bm2-ss --arch v1model -o cfg/bridge-50001.json -DTARGET_BMV2 -DCPU_PORT=255 --p4runtime-files cfg/bridge-50001-p4info.txt bridge.p4
+p4c-bm2-ss --arch v1model -o cfg/bridge-50002.json -DTARGET_BMV2 -DCPU_PORT=255 --p4runtime-files cfg/bridge-50002-p4info.txt bridge.p4
+
+./bridge.py --grpc-port=50001 --topo-config=linear_2_2.json
+./bridge.py --grpc-port=50002 --topo-config=linear_2_2.json
+
+mkdir -p /run/netns; touch /run/netns/h1s1 >/dev/null 2>&1; PID=$(ps -ef | awk '$12 ~ /mininet:h1s1/ {print $2}'); mount -o bind /proc/$PID/ns/net /run/netns/h1s1; ip netns exec h1s1 bash
+mkdir -p /run/netns; touch /run/netns/h2s1 >/dev/null 2>&1; PID=$(ps -ef | awk '$12 ~ /mininet:h2s1/ {print $2}'); mount -o bind /proc/$PID/ns/net /run/netns/h2s1; ip netns exec h2s1 bash
+
+apt-get install -y libboost-system-dev libboost-program-options-dev libboost-filesystem-dev libboost-thread-dev
