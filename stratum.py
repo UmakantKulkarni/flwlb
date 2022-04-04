@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # coding=utf-8
 # Copyright 2018-present Open Networking Foundation
 # SPDX-License-Identifier: Apache-2.0
@@ -46,8 +47,8 @@ from mininet.node import Switch, Host
 DEFAULT_NODE_ID = 1
 DEFAULT_CPU_PORT = 255
 DEFAULT_PIPECONF = "org.onosproject.pipelines.basic"
-STRATUM_BMV2 = 'stratum_bmv2'
-STRATUM_INIT_PIPELINE = '/root/dummy.json'
+STRATUM_BMV2 = '/mydata/flwlb/stratum_bmv2'
+STRATUM_INIT_PIPELINE = '/mydata/flwlb/dummy.json'
 MAX_CONTROLLERS_PER_NODE = 10
 BMV2_LOG_LINES = 5
 
