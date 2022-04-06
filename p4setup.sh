@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+my_dir=opt
+
 apt-get -y update && apt-get -y upgrade && apt-get -y update
 
 # Print commands and exit on errors
@@ -20,8 +22,8 @@ NUM_CORES=`grep -c ^processor /proc/cpuinfo`
 # Atom install steps came from this page on 2020-May-11:
 # https://flight-manual.atom.io/getting-started/sections/installing-atom/#platform-linux
 
-wget -qO - https://packagecloud.io/AtomEditor/atom/gpgkey | apt-key add -
-sh -c 'echo "deb [arch=amd64] https://packagecloud.io/AtomEditor/atom/any/ any main" > /etc/apt/sources.list.d/atom.list'
+#wget -qO - https://packagecloud.io/AtomEditor/atom/gpgkey | apt-key add -
+#sh -c 'echo "deb [arch=amd64] https://packagecloud.io/AtomEditor/atom/any/ any main" > /etc/apt/sources.list.d/atom.list'
 # These commands are done later below
 #apt-get update
 #apt-get install atom
@@ -31,7 +33,6 @@ apt-get update
 KERNEL=$(uname -r)
 DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
 apt-get install -y --no-install-recommends --fix-missing\
-  atom \
   autoconf \
   automake \
   bison \
@@ -152,9 +153,9 @@ sudo pip3 install pypcap
 sudo pip3 install psutil crcmod
 
 
-cd /mydata/
+cd /$my_dir/
 git clone https://github.com/p4lang/tutorials
-PATCH_DIR="/mydata/tutorials/vm-ubuntu-20.04/patches"
+PATCH_DIR="/$my_dir/tutorials/vm-ubuntu-20.04/patches"
 
 # The install steps for p4lang/PI and p4lang/behavioral-model end
 # up installing Python module code in the site-packages directory
@@ -179,7 +180,7 @@ PATCH_DIR="/mydata/tutorials/vm-ubuntu-20.04/patches"
 # https://bugs.launchpad.net/ubuntu/+source/automake/+bug/1250877
 # https://unix.stackexchange.com/questions/351394/makefile-installing-python-module-out-of-of-pythonpath
 
-PY3LOCALPATH=`/mydata/tutorials/vm-ubuntu-20.04/py3localpath.py`
+PY3LOCALPATH=`/$my_dir/tutorials/vm-ubuntu-20.04/py3localpath.py`
 
 move_usr_local_lib_python3_from_site_packages_to_dist_packages() {
     local SRC_DIR
@@ -234,7 +235,7 @@ move_usr_local_lib_python3_from_site_packages_to_dist_packages() {
     ls -lrt ${DST_DIR}
 }
 
-find /usr/lib /usr/local /mydata/.local | sort > /mydata/usr-local-1-before-protobuf.txt
+find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-1-before-protobuf.txt
 
 # --- Protobuf --- #
 git clone https://github.com/google/protobuf.git
@@ -252,7 +253,7 @@ sudo ldconfig
 #cd ../..
 cd ..
 
-find /usr/lib /usr/local /mydata/.local | sort > /mydata/usr-local-2-after-protobuf.txt
+find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-2-after-protobuf.txt
 
 # --- gRPC --- #
 git clone https://github.com/grpc/grpc.git
@@ -268,14 +269,14 @@ sudo make install
 # I believe the following 2 commands, adapted from similar commands in
 # src/python/grpcio/README.rst, should install the Python3 module
 # grpc.
-find /usr/lib /usr/local /mydata/.local | sort > /mydata/usr-local-2b-before-grpc-pip3.txt
-pip3 list | tee /mydata/pip3-list-2b-before-grpc-pip3.txt
+find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-2b-before-grpc-pip3.txt
+pip3 list | tee /$my_dir/pip3-list-2b-before-grpc-pip3.txt
 sudo pip3 install -rrequirements.txt
 GRPC_PYTHON_BUILD_WITH_CYTHON=1 sudo pip3 install .
 sudo ldconfig
 cd ..
 
-find /usr/lib /usr/local /mydata/.local | sort > /mydata/usr-local-3-after-grpc.txt
+find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-3-after-grpc.txt
 
 # Note: This is a noticeable difference between how an earlier
 # user-bootstrap.sh version worked, where it effectively ran
@@ -305,7 +306,7 @@ move_usr_local_lib_python3_from_site_packages_to_dist_packages
 sudo ldconfig
 cd ..
 
-find /usr/lib /usr/local /mydata/.local | sort > /mydata/usr-local-4-after-PI.txt
+find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-4-after-PI.txt
 
 # --- Bmv2 --- #
 git clone https://github.com/p4lang/behavioral-model.git
@@ -329,7 +330,7 @@ sudo ldconfig
 move_usr_local_lib_python3_from_site_packages_to_dist_packages
 cd ../../..
 
-find /usr/lib /usr/local /mydata/.local | sort > /mydata/usr-local-5-after-behavioral-model.txt
+find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-5-after-behavioral-model.txt
 
 # --- P4C --- #
 git clone https://github.com/p4lang/p4c
@@ -349,7 +350,7 @@ sudo make install
 sudo ldconfig
 cd ../..
 
-find /usr/lib /usr/local /mydata/.local | sort > /mydata/usr-local-6-after-p4c.txt
+find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-6-after-p4c.txt
 
 # --- PTF --- #
 git clone https://github.com/p4lang/ptf
@@ -358,7 +359,7 @@ git checkout ${PTF_COMMIT}
 sudo python3 setup.py install
 cd ..
 
-find /usr/lib /usr/local /mydata/.local | sort > /mydata/usr-local-8-after-ptf-install.txt
+find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-8-after-ptf-install.txt
 
 # --- Mininet --- #
 git clone https://github.com/mininet/mininet mininet
@@ -369,7 +370,7 @@ cd ..
 # if everything still works well without it.
 sudo ./mininet/util/install.sh -nw
 
-find /usr/lib /usr/local /mydata/.local | sort > /mydata/usr-local-7-after-mininet-install.txt
+find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-7-after-mininet-install.txt
 
 # --- p4-utils --- #
 git clone https://github.com/nsg-ethz/p4-utils.git p4-utils

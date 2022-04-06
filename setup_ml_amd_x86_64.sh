@@ -11,10 +11,16 @@ apt -y install curl wget apache2-utils default-jre default-jdk wget git vim nano
 
 cd /mydata/
 mkdir tmp
+
+#Does not work on c4130 clemson
 #wget https://developer.download.nvidia.com/compute/cuda/11.6.2/local_installers/cuda_11.6.2_510.47.03_linux.run
 #sudo sh cuda_11.6.2_510.47.03_linux.run --toolkit --toolkitpath=/mydata/cuda --tmpdir=/mydata/tmp/ --silent --override
-wget https://developer.download.nvidia.com/compute/cuda/11.5.0/local_installers/cuda_11.5.0_495.29.05_linux.run
-sudo sh cuda_11.5.0_495.29.05_linux.run --toolkit --toolkitpath=/mydata/cuda --tmpdir=/mydata/tmp/ --silent --override
+#wget https://developer.download.nvidia.com/compute/cuda/11.5.0/local_installers/cuda_11.5.0_495.29.05_linux.run
+#sudo sh cuda_11.5.0_495.29.05_linux.run --toolkit --toolkitpath=/mydata/cuda --tmpdir=/mydata/tmp/ --silent --override
+
+#c4130 on clemson
+wget https://developer.download.nvidia.com/compute/cuda/11.4.1/local_installers/cuda_11.4.1_470.57.02_linux.run
+sudo sh cuda_11.4.1_470.57.02_linux.run --toolkit --toolkitpath=/mydata/cuda --tmpdir=/mydata/tmp/ --silent --override
 
 ubuntu-drivers devices
  
@@ -23,6 +29,7 @@ apt -y install nvidia-driver-470
 
 reboot now -h
 
+#check the CUDA driver version in following command output and make sure you install the same.
 nvidia-smi
 cat /proc/driver/nvidia/gpus/
 
@@ -30,10 +37,12 @@ cd /mydata && git clone https://github.com/UmakantKulkarni/scripts
 
 #https://developer.nvidia.com/compute/cudnn/secure/8.3.3/local_installers/11.5/cudnn-linux-x86_64-8.3.3.40_cuda11.5-archive.tar.xz
 #Download on MaC and copy it to server in /mydata/
-chmod +x cudnn-linux-x86_64-8.3.3.40_cuda11.5-archive.tar.xz
-tar -xvf cudnn-linux-x86_64-8.3.3.40_cuda11.5-archive.tar.xz
-sudo cp -P cudnn-linux-x86_64-8.3.3.40_cuda11.5-archive/lib/* /mydata/cuda/lib64/
-sudo cp cudnn-linux-x86_64-8.3.3.40_cuda11.5-archive/include/* /mydata/cuda/include/
+chmod +x cudnn-11.4-linux-x64-v8.2.4.15.tgz
+tar -xvzf cudnn-11.4-linux-x64-v8.2.4.15.tgz
+
+#Not required since cudnn extracts to cuda
+#sudo cp -P cudnn-linux-x86_64-8.3.3.40_cuda11.5-archive/lib/* /mydata/cuda/lib64/
+#sudo cp cudnn-linux-x86_64-8.3.3.40_cuda11.5-archive/include/* /mydata/cuda/include/
 
 #https://github.com/tensorflow/tensorflow/issues/4078#issuecomment-255129832
 sudo find /usr/ -name 'libcuda.so.1'
@@ -47,6 +56,7 @@ sudo apt install apt-transport-https curl gnupg
 curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
 sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
 echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+apt-get update
 apt -y install bazel-4.2.1
 
 cd /mydata/
@@ -54,27 +64,7 @@ mkdir flow_pic
 cd /mydata/flow_pic
 virtualenv flow_pic_ml
 source flow_pic_ml/bin/activate
-pip3 install matplotlib pandas scikit-learn gdown numpy
-
-cd /mydata/flow_pic
-#https://www.tensorflow.org/install/source
-git clone https://github.com/tensorflow/tensorflow.git
-cd tensorflow
-git checkout v2.8.0
-./configure
-#E=Enter [no clang]
-#n y n E n E E n
-
-export HOME=/mydata/temp/
-bazel --output_base=/mydata/tmp/
-bazel --output_user_root=/mydata/tmp/
-bazel clean
-bazel build -c opt --config=cuda //tensorflow/tools/pip_package:build_pip_package 
-./bazel-bin/tensorflow/tools/pip_package/build_pip_package /mydata/
-
-cd /mydata/flow_pic
-source flow_pic_ml/bin/activate
-pip3 install /mydata/tensorflow-2.8.0-cp38-cp38-linux_x86_64.whl
+pip3 install matplotlib pandas scikit-learn gdown numpy tensorflow
 
 python3
 import tensorflow as tf
@@ -93,6 +83,27 @@ cd FlowPic/
 ./traffic_csv_converter.py 
 ./npzToNpyDs.py
 ./overlap_multiclass_reg_non_bn.py
+
+#Not required since pip3 install works on amd64:
+    cd /mydata/flow_pic
+    #https://www.tensorflow.org/install/source
+    git clone https://github.com/tensorflow/tensorflow.git
+    cd tensorflow
+    git checkout v2.8.0
+    ./configure
+    #E=Enter [no clang]
+    #n y n E n E E n
+
+    export HOME=/mydata/temp/
+    bazel --output_base=/mydata/tmp/
+    bazel --output_user_root=/mydata/tmp/
+    bazel clean
+    bazel build -c opt --config=cuda //tensorflow/tools/pip_package:build_pip_package 
+    ./bazel-bin/tensorflow/tools/pip_package/build_pip_package /mydata/
+
+    cd /mydata/flow_pic
+    source flow_pic_ml/bin/activate
+    pip3 install /mydata/tensorflow-2.8.0-cp38-cp38-linux_x86_64.whl
 
 
 echo "Finished running setup-node.sh"
