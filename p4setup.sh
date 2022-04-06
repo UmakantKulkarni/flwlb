@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+apt-get -y update && apt-get -y upgrade && apt-get -y update
+
 # Print commands and exit on errors
 set -xe
 
