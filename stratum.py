@@ -44,11 +44,13 @@ import time
 from mininet.log import warn
 from mininet.node import Switch, Host
 
+MY_DIR = "opt"
+
 DEFAULT_NODE_ID = 1
 DEFAULT_CPU_PORT = 255
 DEFAULT_PIPECONF = "org.onosproject.pipelines.basic"
-STRATUM_BMV2 = '/mydata/flwlb/stratum_bmv2'
-STRATUM_INIT_PIPELINE = '/mydata/flwlb/dummy.json'
+STRATUM_BMV2 = "/{}/flwlb/stratum_bmv2".format(MY_DIR)
+STRATUM_INIT_PIPELINE = "/{}/flwlb/dummy.json".format(MY_DIR)
 MAX_CONTROLLERS_PER_NODE = 10
 BMV2_LOG_LINES = 5
 
