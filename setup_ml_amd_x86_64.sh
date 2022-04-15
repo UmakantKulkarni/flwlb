@@ -2,8 +2,9 @@
 
 #Auto-method - https://askubuntu.com/a/1288405/1246619 - Dont follow this link
 
-#Manual method:
+#Manual method: Strictly follow the commands in uncommented section and it works on c4130 clemson
 
+systemctl disable NetworkManager
 
 apt-get update && apt-get -y upgrade && apt-get update
 
@@ -31,7 +32,7 @@ reboot now -h
 
 #check the CUDA driver version in following command output and make sure you install the same.
 nvidia-smi
-cat /proc/driver/nvidia/gpus/
+ls /proc/driver/nvidia/gpus/
 
 cd /mydata && git clone https://github.com/UmakantKulkarni/scripts
 
@@ -51,14 +52,6 @@ cp /usr/lib/x86_64-linux-gnu/libcuda.so.1 /mydata/cuda/lib64/
 export LD_LIBRARY_PATH="/mydata/cuda/targets/x86_64-linux/lib/:$LD_LIBRARY_PATH"
 source ~/.bashrc
 
-#https://docs.bazel.build/versions/main/install-ubuntu.html
-sudo apt install apt-transport-https curl gnupg
-curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
-sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
-echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
-apt-get update
-apt -y install bazel-4.2.1
-
 cd /mydata/
 mkdir flow_pic
 cd /mydata/flow_pic
@@ -66,6 +59,14 @@ virtualenv flow_pic_ml
 source flow_pic_ml/bin/activate
 pip3 install matplotlib pandas scikit-learn gdown numpy tensorflow
 
+python3
+import tensorflow as tf
+tf.config.list_physical_devices('GPU')
+
+#Enable only 1 GPU
+echo "export CUDA_VISIBLE_DEVICES=0" >> ~/.bashrc
+
+#verify if CUDA can see only 1 GPU - https://groups.google.com/g/cloudlab-users/c/DjhzgXv4xGQ
 python3
 import tensorflow as tf
 tf.config.list_physical_devices('GPU')
@@ -82,9 +83,17 @@ mv classes_csvs classes
 cd FlowPic/
 ./traffic_csv_converter.py 
 ./npzToNpyDs.py
-./overlap_multiclass_reg_non_bn.py
+./traffic_categorization.py
 
 #Not required since pip3 install works on amd64:
+    #https://docs.bazel.build/versions/main/install-ubuntu.html
+    sudo apt install apt-transport-https curl gnupg
+    curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+    sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
+    echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+    apt-get update
+    apt -y install bazel-4.2.1
+
     cd /mydata/flow_pic
     #https://www.tensorflow.org/install/source
     git clone https://github.com/tensorflow/tensorflow.git
