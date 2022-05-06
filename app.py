@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import socket
 import os
 import json
 import glob
@@ -27,7 +28,8 @@ class S(BaseHTTPRequestHandler):
 def run(server_class=HTTPServer, handler_class=S, port=8080):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
-    print('Starting httpd...')
+    myip = socket.gethostbyname(socket.gethostname())
+    print('Starting httpd on ', myip)
     httpd.serve_forever()
 
 
