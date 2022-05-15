@@ -1,4 +1,7 @@
 
+sh /local/repository/setup-grow-rootfs.sh 0
+reboot now -h
+
 scp ukulkarn@mc21.cs.purdue.edu:scratch/* .
 
 Dont need this file - libsimpleswitch_runner.so.0
