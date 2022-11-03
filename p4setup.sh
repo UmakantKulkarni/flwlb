@@ -2,16 +2,18 @@
 
 my_dir=opt
 
+export DEBIAN_FRONTEND=noninteractive
+
 apt-get -y update && apt-get -y upgrade && apt-get -y update
 
 # Print commands and exit on errors
 set -xe
 
 #Src
-BMV2_COMMIT="b0fb01ecacbf3a7d7f0c01e2f149b0c6a957f779"  # 2021-Sep-07
-PI_COMMIT="a5fd855d4b3293e23816ef6154e83dc6621aed6a"    # 2021-Sep-07
-P4C_COMMIT="149634bbe4842fb7c1e80d1b7c9d1e0ec91b0051"   # 2021-Sep-07
-PTF_COMMIT="8f260571036b2684f16366962edd0193ef61e9eb"   # 2021-Sep-07
+BMV2_COMMIT="f16d0de3486aa7fb2e1fe554aac7d237cc1adc33"  # 2022-May-01
+PI_COMMIT="f547455a260b710706bef82afab4cb9937bac416"    # 2022-May-01
+P4C_COMMIT="1471fdd22b683e1946b7730d83c877d94daba683"   # 2022-May-01
+PTF_COMMIT="405513bcad2eae3092b0ac4ceb31e8dec5e32311"   # 2022-May-01
 PROTOBUF_COMMIT="v3.6.1"
 GRPC_COMMIT="tags/v1.17.2"
 
@@ -312,23 +314,15 @@ find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-4-after-PI.
 git clone https://github.com/p4lang/behavioral-model.git
 cd behavioral-model
 git checkout ${BMV2_COMMIT}
-patch -p1 < "${PATCH_DIR}/behavioral-model-use-correct-libssl-pkg.patch" || echo "Errors while attempting to patch behavioral-model, but continuing anyway ..."
 ./install_deps.sh
 ./autogen.sh
-./configure --enable-debugger --with-pi
+./configure --enable-debugger --with-pi --with-thrift
 make -j${NUM_CORES}
-sudo make install
-sudo ldconfig
-# Simple_switch_grpc target
-cd targets/simple_switch_grpc
-./autogen.sh
-./configure --with-thrift
-make -j${NUM_CORES}
-sudo make install
+sudo make install-strip
 sudo ldconfig
 # install-p4dev-v4.sh script does this here:
 move_usr_local_lib_python3_from_site_packages_to_dist_packages
-cd ../../..
+cd ..
 
 find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-5-after-behavioral-model.txt
 
