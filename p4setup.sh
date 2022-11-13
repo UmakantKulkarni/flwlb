@@ -239,6 +239,7 @@ move_usr_local_lib_python3_from_site_packages_to_dist_packages() {
 
 find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-1-before-protobuf.txt
 
+cd /$my_dir/
 # --- Protobuf --- #
 git clone https://github.com/google/protobuf.git
 cd protobuf
@@ -257,6 +258,7 @@ cd ..
 
 find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-2-after-protobuf.txt
 
+cd /$my_dir/
 # --- gRPC --- #
 git clone https://github.com/grpc/grpc.git
 cd grpc
@@ -288,6 +290,7 @@ find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-3-after-grp
 # script, might result in less PI project features being compiled into
 # its binaries.
 
+cd /$my_dir/
 # --- PI/P4Runtime --- #
 git clone https://github.com/p4lang/PI.git
 cd PI
@@ -310,6 +313,7 @@ cd ..
 
 find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-4-after-PI.txt
 
+cd /$my_dir/
 # --- Bmv2 --- #
 git clone https://github.com/p4lang/behavioral-model.git
 cd behavioral-model
@@ -326,6 +330,7 @@ cd ..
 
 find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-5-after-behavioral-model.txt
 
+cd /$my_dir/
 # --- P4C --- #
 git clone https://github.com/p4lang/p4c
 cd p4c
@@ -346,6 +351,7 @@ cd ../..
 
 find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-6-after-p4c.txt
 
+cd /$my_dir/
 # --- PTF --- #
 git clone https://github.com/p4lang/ptf
 cd ptf
@@ -355,6 +361,7 @@ cd ..
 
 find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-8-after-ptf-install.txt
 
+cd /$my_dir/
 # --- Mininet --- #
 git clone https://github.com/mininet/mininet mininet
 cd mininet
@@ -366,6 +373,7 @@ sudo ./mininet/util/install.sh -nw
 
 find /usr/lib /usr/local /$my_dir/.local | sort > /$my_dir/usr-local-7-after-mininet-install.txt
 
+cd /$my_dir/
 # --- p4-utils --- #
 git clone https://github.com/nsg-ethz/p4-utils.git p4-utils
 cd p4-utils
