@@ -4,7 +4,7 @@ my_dir=opt
 
 export DEBIAN_FRONTEND=noninteractive
 
-apt-get -y update && apt-get -y upgrade && apt-get -y update
+apt-get -y update && apt-get -y upgrade && apt-get -y update && apt-get -y dist-upgrade
 
 # Print commands and exit on errors
 set -xe
@@ -87,7 +87,10 @@ apt-get install -y --no-install-recommends --fix-missing\
   vim \
   wget \
   xcscope-el \
-  xterm
+  xterm \
+  libyang-dev \
+  libsysrepo-dev \
+  libmicrohttpd-dev
 
 # TBD: Should these packages be installed via apt-get ?  They are in
 # my install-p4dev-v4.sh script, but they might not be needed, either.
@@ -132,7 +135,7 @@ apt-get install -y --no-install-recommends --fix-missing\
 # At that point, attempting to import any of the 3 modules above gave NO error.
 
 sudo apt-get purge -y python3-protobuf || echo "Failed to remove python3-protobuf, probably because there was no such package installed"
-sudo pip3 install protobuf==3.6.1
+sudo pip3 install protobuf==3.19.0
 
 # Starting in 2019-Nov, Python3 version of Scapy is needed for `cd
 # p4c/build ; make check` to succeed.
@@ -300,7 +303,7 @@ git submodule update --init --recursive
 # install-p4dev-v4.sh adds more --without-* options to the configure
 # script here.  I suppose without those, this script will cause
 # building PI code to include more features?
-./configure --with-proto
+./configure --with-proto --with-bmv2 --with-internal-rpc --with-cli --with-sysrepo
 make -j${NUM_CORES}
 sudo make install
 # install-p4dev-v4.sh at this point does these things, which might be
@@ -382,3 +385,10 @@ sudo ./install.sh
 cd ..
 
 pip3 install p4runtime-shell
+
+# Set PYTHONPATH
+echo 'export PYTHONPATH="${PYTHONPATH}:/usr/local/lib/python3.10/:/usr/local/lib/python3.10/site-packages"' >> ~/.bashrc 
+source ~/.bashrc 
+
+# If user is root, keep the env variables by adding following line to /etc/sudoers - https://stackoverflow.com/a/25346281/12865444
+echo 'Defaults env_keep += "PYTHONPATH"' | sudo EDITOR='tee -a' visudo
