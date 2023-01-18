@@ -90,6 +90,7 @@ apt-get install -y --no-install-recommends --fix-missing\
   xterm \
   libyang-dev \
   libsysrepo-dev \
+  libnanomsg-dev \
   libmicrohttpd-dev
 
 # TBD: Should these packages be installed via apt-get ?  They are in
@@ -133,6 +134,16 @@ apt-get install -y --no-install-recommends --fix-missing\
 # At that point, attempting to import any of the 3 modules above gave an error.
 # Then did 'sudo pip3 install protobuf==3.6.1'
 # At that point, attempting to import any of the 3 modules above gave NO error.
+
+cd /$my_dir/
+wget -O libboost-system1.62.0_1.62.0+dfsg-5_amd64.deb http://archive.ubuntu.com/ubuntu/pool/universe/b/boost1.62/libboost-system1.62.0_1.62.0+dfsg-5_amd64.deb
+wget -O libboost-program-options1.62.0_1.62.0+dfsg-5_amd64.deb http://archive.ubuntu.com/ubuntu/pool/universe/b/boost1.62/libboost-program-options1.62.0_1.62.0+dfsg-5_amd64.deb
+wget -O libboost-filesystem1.62.0_1.62.0+dfsg-5_amd64.deb http://archive.ubuntu.com/ubuntu/pool/universe/b/boost1.62/libboost-filesystem1.62.0_1.62.0+dfsg-5_amd64.deb
+wget -O libboost-thread1.62.0_1.62.0+dfsg-5_amd64.deb http://archive.ubuntu.com/ubuntu/pool/universe/b/boost1.62/libboost-thread1.62.0_1.62.0+dfsg-5_amd64.deb
+dpkg -i libboost-system1.62.0_1.62.0+dfsg-5_amd64.deb
+dpkg -i libboost-program-options1.62.0_1.62.0+dfsg-5_amd64.deb
+dpkg -i libboost-filesystem1.62.0_1.62.0+dfsg-5_amd64.deb
+dpkg -i libboost-thread1.62.0_1.62.0+dfsg-5_amd64.deb
 
 sudo apt-get purge -y python3-protobuf || echo "Failed to remove python3-protobuf, probably because there was no such package installed"
 sudo pip3 install protobuf==3.19.0
