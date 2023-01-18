@@ -88,7 +88,7 @@ apt-get install -y --no-install-recommends --fix-missing\
   wget \
   xcscope-el \
   xterm \
-  libyang-dev \
+  libyang2-dev \
   libsysrepo-dev \
   libnanomsg-dev \
   libmicrohttpd-dev
